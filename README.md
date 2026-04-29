@@ -2,6 +2,8 @@
 
 An MCP (Model Context Protocol) server that enables AI assistants to interact with [TypeDB](https://typedb.com) databases. This allows LLMs to execute TypeQL queries, manage databases, and manage users through natural language.
 
+Available on Docker Hub: https://hub.docker.com/repository/docker/typedb/typedb-mcp
+
 ## Features
 
 - **Query Execution**: Run TypeQL read, write, and schema queries
