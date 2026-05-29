@@ -10,13 +10,14 @@ services:
     networks:
       - typedb-network
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000"]
+      test: ["CMD", "bash", "-c", "exec 3<>/dev/tcp/localhost/8000"]
       interval: 10s
       timeout: 5s
       retries: 5
 
   typedb-mcp:
-    image: typedb/typedb-mcp:1.0.0
+    image: typedb/typedb-mcp:1.0.1
+    platform: linux/amd64
     container_name: typedb-mcp
     ports:
       - "8001:8001"
