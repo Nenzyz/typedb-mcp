@@ -17,19 +17,30 @@ mcp = FastMCP(
 )
 
 @mcp.tool
-def query(query: str, database: str, transaction_type: str) -> str:
-    """Executes given TypeQL query against the given database.
-    
+def query(query: str | list[str], database: str, transaction_type: str) -> str:
+    """Executes given TypeQL query (or list of queries) against the given database.
+
+    Pass a single string to run one query against a one-shot transaction.
+
+    Pass a list of strings to run several independent TypeQL pipelines inside a
+    single transaction (open, run each query in order, commit/close). Use this
+    when you need multiple `match ... insert ...` pipelines or any sequence of
+    queries that must not be merged into one chained pipeline.
+
     Args:
-        query: TypeQL query to be executed
+        query: TypeQL query string, or list of query strings to run in one transaction
         database: The name of the database against which the query will be executed
         transaction_type: Transaction type - "read" (for fetching data), "write" (for inserting data), or "schema" (for modifying the schema)
-    
+
     Returns:
-        Query results as JSON string
-    
-    Example:
-        query("match $p isa person; fetch { $p.* };", "social_network")
+        Query result as JSON string. For list input, a JSON array of per-query results.
+
+    Examples:
+        query("match $p isa person; fetch { $p.* };", "social_network", "read")
+        query([
+            'match $f isa form, has name "A"; insert $f has window-mode "X";',
+            'match $f isa form, has name "B"; insert $f has window-mode "Y";',
+        ], "mydb", "write")
     """
     return execute_query(query, database, transaction_type)
 
